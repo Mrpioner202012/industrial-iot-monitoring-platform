@@ -1,0 +1,261 @@
+
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Industrial IoT Dashboard</title>
+
+    <link rel="stylesheet"
+          href="/static/style.css">
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"
+      defer>
+    </script>
+
+    <script src="/static/dashboard.js" defer></script>
+</head>
+
+<body>
+
+<main class="container">
+
+    <header>
+        <div>
+            <h1>Industrial IoT Dashboard</h1>
+            <p>
+                Monitoreo y control de ventilación industrial
+            </p>
+        </div>
+
+        <span class="tag">
+            SIMULACIÓN · v0.7.0
+        </span>
+    </header>
+
+    <!-- MEDICIONES -->
+
+    <section class="metrics">
+
+        <article class="card">
+            <h3>Temperatura</h3>
+            <strong id="temperature">-- °C</strong>
+        </article>
+
+        <article class="card">
+            <h3>Velocidad del aire</h3>
+            <strong id="speed">-- m/s</strong>
+        </article>
+
+        <article class="card">
+            <h3>Potencia del ventilador</h3>
+            <strong id="power">--%</strong>
+        </article>
+
+    </section>
+
+    <!-- GRAFICAS -->
+
+    <section class="charts">
+
+        <article class="card">
+            <h3>Temperatura en tiempo real</h3>
+
+            <div class="chart-wrap">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+        </article>
+
+        <article class="card">
+            <h3>Velocidad del aire en tiempo real</h3>
+
+            <div class="chart-wrap">
+                <canvas id="speedChart"></canvas>
+            </div>
+        </article>
+
+    </section>
+
+    <!-- CONTROL -->
+
+    <section class="card">
+
+        <h2>Control del ventilador</h2>
+
+        <div class="mode-buttons">
+            <button id="manualMode" type="button">
+                Manual
+            </button>
+
+            <button id="autoMode" type="button">
+                Automático PID
+            </button>
+        </div>
+
+        <div id="manualControls">
+
+            <label for="powerSlider">
+                Potencia solicitada:
+                <b id="requestedPower">0%</b>
+            </label>
+
+            <input
+                type="range"
+                id="powerSlider"
+                min="0"
+                max="100"
+                value="0"
+            >
+
+            <button id="applyPower" type="button">
+                Aplicar potencia
+            </button>
+
+        </div>
+
+        <!-- CONFIGURACION PID -->
+
+        <form id="pidForm">
+
+            <h3>Configuración PID</h3>
+
+            <div class="fields">
+
+                <label>
+                    Temperatura objetivo (°C)
+                    <input
+                        id="setpoint"
+                        type="number"
+                        min="25"
+                        max="40"
+                        step="0.1"
+                        value="27"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Kp
+                    <input
+                        id="kp"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="12"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Ki
+                    <input
+                        id="ki"
+                        type="number"
+                        min="0"
+                        max="20"
+                        step="0.01"
+                        value="0.35"
+                        required
+                    >
+                </label>
+
+                <label>
+                    Kd
+                    <input
+                        id="kd"
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value="0"
+                        required
+                    >
+                </label>
+
+            </div>
+
+            <button type="submit">
+                Guardar parámetros PID
+            </button>
+
+        </form>
+
+        <p>
+            Modo actual:
+            <b id="currentMode">--</b>
+
+            · Error de temperatura:
+            <b id="pidError">-- °C</b>
+        </p>
+
+        <p id="feedback" aria-live="polite"></p>
+
+    </section>
+
+    <!-- ALARMAS -->
+
+    <section class="card">
+
+        <h2>Supervisión de alarmas</h2>
+
+        <div id="alarmBox" class="alarm normal">
+            <h3 id="alarmLevel">--</h3>
+
+            <p id="alarmMessage">
+                Esperando datos...
+            </p>
+        </div>
+
+    </section>
+
+    <!-- ESTADISTICAS -->
+
+    <section class="card">
+
+        <h2>Estadísticas de mediciones</h2>
+
+        <div class="stats">
+
+            <div>
+                Registros
+                <b id="totalMeasurements">--</b>
+            </div>
+
+            <div>
+                Temperatura promedio
+                <b id="avgTemp">--</b>
+            </div>
+
+            <div>
+                Temperatura máxima
+                <b id="maxTemp">--</b>
+            </div>
+
+            <div>
+                Velocidad promedio
+                <b id="avgSpeed">--</b>
+            </div>
+
+        </div>
+
+        <a class="download" href="/api/export/csv">
+            Exportar mediciones CSV
+        </a>
+
+    </section>
+
+    <footer>
+        <span id="connection">Conectando...</span>
+        · Actualización cada segundo
+        · <a href="/docs">Documentación API</a>
+    </footer>
+
+</main>
+
+</body>
+</html>
